@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Collections.Generic;
 using SB.CoreTest;
 
 /// <summary>
@@ -58,6 +58,47 @@ namespace SB.TechnicalTest
         /// <returns>Highest safe floor.</returns>
         static int Attempt2()
         {
+            IDictionary<int, bool> memorisation = new Dictionary<int, bool>();
+            
+            bool TryAndMemorise(int val)
+            {
+                if (memorisation.ContainsKey(val) == false)
+                {
+                    memorisation[val] = Building.DropMarble(val);
+                }
+                
+                return memorisation[val];
+            }
+
+            int min = 1;
+            int max = Building.NumberFloors;
+
+            while (min <= max)
+            {
+                int mid = (min + max) / 2;
+                bool isSafe = TryAndMemorise(mid);
+
+                if (isSafe == true)
+                {
+                    if (mid == Building.NumberFloors)
+                    {
+                        return mid;
+                    }
+                    
+                    min = mid + 1;
+                }
+                else
+                {
+                    int belowMid = mid - 1;
+
+                    if (TryAndMemorise(belowMid) == true)
+                    {
+                        return belowMid;
+                    }
+                    
+                    max = belowMid;
+                }
+            }
             return 0;
         }
     }
